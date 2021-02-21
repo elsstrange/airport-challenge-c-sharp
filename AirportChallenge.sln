@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportChallenge.Tests", "NUnitTestProject1\AirportChallenge.Tests.csproj", "{DAA5FF95-D845-4578-AF3C-92A8F32BBA9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportChallenge", "ConsoleApp2\AirportChallenge.csproj", "{874CD897-6144-4215-9C93-DCBE29FF11C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAA5FF95-D845-4578-AF3C-92A8F32BBA9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAA5FF95-D845-4578-AF3C-92A8F32BBA9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAA5FF95-D845-4578-AF3C-92A8F32BBA9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAA5FF95-D845-4578-AF3C-92A8F32BBA9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874CD897-6144-4215-9C93-DCBE29FF11C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874CD897-6144-4215-9C93-DCBE29FF11C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874CD897-6144-4215-9C93-DCBE29FF11C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874CD897-6144-4215-9C93-DCBE29FF11C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2ACCF873-C1B3-4678-A8C9-D2E57725D5EB}
+	EndGlobalSection
+EndGlobal
