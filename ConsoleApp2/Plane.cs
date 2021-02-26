@@ -21,6 +21,10 @@ public class Plane
 
 	public void Land()
     {
-
+		if(!InFlight)
+        {
+			throw new InvalidOperationException("Cannot Land: Already landed");
+		}
+		InFlight = false;
     }
 }

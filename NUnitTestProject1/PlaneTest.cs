@@ -40,6 +40,26 @@ namespace AirportChallenge.Tests
 				() => { testPlane.Land(); },
 				Throws.Nothing);
         }
+
+		[Test]
+		public void Land_should_throw_error_if_plane_is_landed()
+		{
+			string landingError = "Cannot Land: Already landed";
+			Assert.That(
+				() => { testPlane.Land(); },
+				Throws.InvalidOperationException
+				.With.Property("Message").EqualTo(landingError));
+		}
+
+		[Test]
+		public void Land_should_allow_subsequent_take_off()
+        {
+			testPlane.TakeOff();
+			testPlane.Land();
+			Assert.That(
+				() => { testPlane.TakeOff(); },
+				Throws.Nothing);
+        }
 	}
 
 }
