@@ -70,5 +70,17 @@ namespace AirportChallenge.Tests
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(planeNotPresentError));
         }
+
+        [Test]
+        public void TakeOff_should_only_remove_specified_plane_from_Planes_list()
+        {
+            Airport testAirport = new Airport();
+            var testPlane1 = A.Fake<Plane>();
+            var testPlane2 = A.Fake<Plane>();
+            testAirport.Land(testPlane1);
+            testAirport.Land(testPlane2);
+            testAirport.TakeOff(testPlane1);
+            Assert.That(testAirport.Planes, Has.Member(testPlane2));
+        }
     }
 }
