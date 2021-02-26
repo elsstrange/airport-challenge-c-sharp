@@ -26,8 +26,15 @@ namespace AirportChallenge
             {
                 throw new InvalidOperationException("Cannot land: No capacity for additional planes");
             }
-            plane.Land();
-            Planes.Add(plane);
+            try
+            {
+                plane.Land();
+                Planes.Add(plane);
+            }
+            catch
+            {
+                throw new InvalidOperationException("Cannot land: Plane rejected instruction to land");
+            }
         }
 
         public void TakeOff(Plane plane)

@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using FakeItEasy;
 
@@ -7,23 +8,25 @@ namespace AirportChallenge.Tests
     public class AirportTest
     {
         Airport testAirport;
-        Plane testPlane;
+        Plane testLandedPlane, testInFlightPlane;
         string fullAirportError;
 
         [SetUp]
         public void Setup()
         {
             testAirport = new Airport();
-            testPlane = A.Fake<Plane>();
-            A.CallTo(() => testPlane.Land());
+            testLandedPlane = A.Fake<Plane>();
+            A.CallTo(() => testLandedPlane.Land()).Throws<InvalidOperationException>();
+            testInFlightPlane = A.Fake<Plane>();
+            A.CallTo(() => testInFlightPlane.Land());
             fullAirportError = "Cannot land: No capacity for additional planes";
         }
 
         [Test]
         public void Land_should_add_plane_to_Planes_list()
         {
-            testAirport.Land(testPlane);
-            Assert.That(testAirport.Planes, Has.Member(testPlane));
+            testAirport.Land(testInFlightPlane);
+            Assert.That(testAirport.Planes, Has.Member(testInFlightPlane));
         }
 
         [Test]
@@ -34,7 +37,7 @@ namespace AirportChallenge.Tests
                 testAirport.Land(A.Fake<Plane>());
             }
             Assert.That(
-                () => { testAirport.Land(testPlane); },
+                () => { testAirport.Land(testInFlightPlane); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(fullAirportError));
         }
@@ -45,7 +48,7 @@ namespace AirportChallenge.Tests
             Airport testAirport = new Airport(1);
             testAirport.Land(A.Fake<Plane>());
             Assert.That(
-                () => { testAirport.Land(testPlane); },
+                () => { testAirport.Land(testInFlightPlane); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(fullAirportError));
         }
@@ -53,17 +56,26 @@ namespace AirportChallenge.Tests
         [Test]
         public void Land_should_call_Land_on_plane()
         {
-            //A.CallTo(() => testPlane.Land()).Throws(new InvalidDateException());
-            testAirport.Land(testPlane);
-            A.CallTo(() => testPlane.Land()).MustHaveHappened();
+            testAirport.Land(testInFlightPlane);
+            A.CallTo(() => testInFlightPlane.Land()).MustHaveHappened();
+        }
+
+        [Test]
+        public void Land_should_not_land_a_plane_if_plane_rejects_landing_instruction()
+        {
+            string planeLandError = "Cannot land: Plane rejected instruction to land";
+            Assert.That(
+                () => { testAirport.Land(testLandedPlane); },
+                Throws.InvalidOperationException
+                .With.Property("Message").EqualTo(planeLandError));
         }
 
         [Test]
         public void TakeOff_should_remove_plane_from_Planes_list()
         {
-            testAirport.Land(testPlane);
-            testAirport.TakeOff(testPlane);
-            Assert.That(testAirport.Planes, Has.No.Member(testPlane));
+            testAirport.Land(testInFlightPlane);
+            testAirport.TakeOff(testInFlightPlane);
+            Assert.That(testAirport.Planes, Has.No.Member(testInFlightPlane));
         }
 
         [Test]
@@ -72,7 +84,7 @@ namespace AirportChallenge.Tests
             string planeNotPresentError = "Cannot take off: Specified plane is not present";
             
             Assert.That(
-                () => { testAirport.TakeOff(testPlane); },
+                () => { testAirport.TakeOff(testInFlightPlane); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(planeNotPresentError));
         }
@@ -81,12 +93,12 @@ namespace AirportChallenge.Tests
         public void TakeOff_should_only_remove_specified_plane_from_Planes_list()
         {
             
-            var testPlane1 = A.Fake<Plane>();
-            var testPlane2 = A.Fake<Plane>();
-            testAirport.Land(testPlane1);
-            testAirport.Land(testPlane2);
-            testAirport.TakeOff(testPlane1);
-            Assert.That(testAirport.Planes, Has.Member(testPlane2));
+            var testInFlightPlane1 = A.Fake<Plane>();
+            var testInFlightPlane2 = A.Fake<Plane>();
+            testAirport.Land(testInFlightPlane1);
+            testAirport.Land(testInFlightPlane2);
+            testAirport.TakeOff(testInFlightPlane1);
+            Assert.That(testAirport.Planes, Has.Member(testInFlightPlane2));
         }
     }
 }
