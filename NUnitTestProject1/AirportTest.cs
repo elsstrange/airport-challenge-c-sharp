@@ -15,6 +15,7 @@ namespace AirportChallenge.Tests
         {
             testAirport = new Airport();
             testPlane = A.Fake<Plane>();
+            A.CallTo(() => testPlane.Land());
             fullAirportError = "Cannot land: No capacity for additional planes";
         }
 
@@ -47,6 +48,14 @@ namespace AirportChallenge.Tests
                 () => { testAirport.Land(testPlane); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(fullAirportError));
+        }
+
+        [Test]
+        public void Land_should_call_Land_on_plane()
+        {
+            //A.CallTo(() => testPlane.Land()).Throws(new InvalidDateException());
+            testAirport.Land(testPlane);
+            A.CallTo(() => testPlane.Land()).MustHaveHappened();
         }
 
         [Test]

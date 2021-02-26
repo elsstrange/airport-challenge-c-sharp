@@ -19,7 +19,7 @@ public class Plane
 		InFlight = true;
     }
 
-	public void Land()
+	public virtual void Land()
     {
 		if(!InFlight)
         {
