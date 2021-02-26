@@ -9,10 +9,15 @@ namespace AirportChallenge
         {
             get; private set;
         }
+        private int Capacity
+        {
+            get; set;
+        }
         
-        public Airport()
+        public Airport(int capacity = 10)
         {
             Planes = new List<Plane>();
+            Capacity = capacity;
         }
 
         public void Land(Plane plane)
@@ -26,7 +31,7 @@ namespace AirportChallenge
 
         private bool IsFull()
         {
-            return Planes.Count >= 10;
+            return Planes.Count >= Capacity;
         }
     }
 }
