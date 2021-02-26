@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using FakeItEasy;
 
 namespace AirportChallenge.Tests
 {
@@ -11,12 +12,12 @@ namespace AirportChallenge.Tests
         //}
 
         [Test]
-        public void Land()
+        public void Land_should_add_plane_to_Planes_list()
         {
-            object testPlane = new object();
+            var testPlane = A.Fake<Plane>();
             Airport testAirport = new Airport();
             testAirport.Land(testPlane);
-            Assert.IsTrue(testAirport.Planes.Contains(testPlane));
+            Assert.That(testAirport.Planes, Has.Member(testPlane));
         }
     }
 }

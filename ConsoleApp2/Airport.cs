@@ -5,17 +5,17 @@ namespace AirportChallenge
 {
     public class Airport
     {
-        public List<object> Planes
+        public List<Plane> Planes
         {
             get; private set;
         }
         
         public Airport()
         {
-            Planes = new List<object>();
+            Planes = new List<Plane>();
         }
 
-        public void Land(object plane)
+        public void Land(Plane plane)
         {
             Planes.Add(plane);
         }
