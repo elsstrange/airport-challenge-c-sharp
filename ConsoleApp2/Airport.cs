@@ -43,6 +43,7 @@ namespace AirportChallenge
             {
                 throw new InvalidOperationException("Cannot take off: Specified plane is not present");
             }
+            plane.TakeOff();
             Planes.Remove(plane);
         }
 

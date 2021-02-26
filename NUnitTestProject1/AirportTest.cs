@@ -18,7 +18,6 @@ namespace AirportChallenge.Tests
             testLandedPlane = A.Fake<Plane>();
             A.CallTo(() => testLandedPlane.Land()).Throws<InvalidOperationException>();
             testInFlightPlane = A.Fake<Plane>();
-            A.CallTo(() => testInFlightPlane.Land());
             fullAirportError = "Cannot land: No capacity for additional planes";
         }
 
@@ -99,6 +98,14 @@ namespace AirportChallenge.Tests
             testAirport.Land(testInFlightPlane2);
             testAirport.TakeOff(testInFlightPlane1);
             Assert.That(testAirport.Planes, Has.Member(testInFlightPlane2));
+        }
+
+        [Test]
+        public void TakeOff_should_call_TakeOff_on_plane()
+        {
+            testAirport.Land(testInFlightPlane);
+            testAirport.TakeOff(testInFlightPlane);
+            A.CallTo(() => testInFlightPlane.TakeOff()).MustHaveHappened();
         }
     }
 }

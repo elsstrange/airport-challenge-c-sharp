@@ -10,7 +10,7 @@ public class Plane
 		InFlight = false;
 	}
 
-	public void TakeOff()
+	public virtual void TakeOff()
     {
 		if(InFlight)
         {
