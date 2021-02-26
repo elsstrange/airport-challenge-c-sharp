@@ -58,5 +58,17 @@ namespace AirportChallenge.Tests
             testAirport.TakeOff(testPlane);
             Assert.That(testAirport.Planes, Has.No.Member(testPlane));
         }
+
+        [Test]
+        public void TakeOff_should_throw_error_if_specified_plane_is_not_present()
+        {
+            string planeNotPresentError = "Cannot take off: Specified plane is not present";
+            Airport testAirport = new Airport();
+            var testPlane = A.Fake<Plane>();
+            Assert.That(
+                () => { testAirport.TakeOff(testPlane); },
+                Throws.InvalidOperationException
+                .With.Property("Message").EqualTo(planeNotPresentError));
+        }
     }
 }

@@ -31,12 +31,21 @@ namespace AirportChallenge
 
         public void TakeOff(Plane plane)
         {
+            if (PlaneIsNotPresent(plane))
+            {
+                throw new InvalidOperationException("Cannot take off: Specified plane is not present");
+            }
             Planes.Remove(plane);
         }
 
         private bool IsFull()
         {
             return Planes.Count >= Capacity;
+        }
+
+        private bool PlaneIsNotPresent(Plane plane)
+        {
+            return !Planes.Contains(plane);
         }
     }
 }
