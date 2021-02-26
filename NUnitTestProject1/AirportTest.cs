@@ -19,5 +19,21 @@ namespace AirportChallenge.Tests
             testAirport.Land(testPlane);
             Assert.That(testAirport.Planes, Has.Member(testPlane));
         }
+
+        [Test]
+        public void Land_should_not_land_plane_if_airport_is_full_at_default_capacity_10()
+        {
+            string fullAirportError = "Cannot land: No capacity for additional planes";
+            Airport testAirport = new Airport();
+            for(var i = 0; i < 10; i++)
+            {
+                testAirport.Land(A.Fake<Plane>());
+            }
+            var testPlane = A.Fake<Plane>();
+            Assert.That(
+                () => { testAirport.Land(testPlane); },
+                Throws.InvalidOperationException
+                .With.Property("Message").EqualTo(fullAirportError));
+        }
     }
 }
