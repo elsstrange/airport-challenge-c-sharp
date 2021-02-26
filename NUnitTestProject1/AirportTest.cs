@@ -48,5 +48,15 @@ namespace AirportChallenge.Tests
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(fullAirportError));
         }
+
+        [Test]
+        public void TakeOff_should_remove_plane_from_Planes_list()
+        {
+            Airport testAirport = new Airport();
+            var testPlane = A.Fake<Plane>();
+            testAirport.Land(testPlane);
+            testAirport.TakeOff(testPlane);
+            Assert.That(testAirport.Planes, Has.No.Member(testPlane));
+        }
     }
 }

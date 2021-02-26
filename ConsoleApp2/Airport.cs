@@ -29,6 +29,11 @@ namespace AirportChallenge
             Planes.Add(plane);
         }
 
+        public void TakeOff(Plane plane)
+        {
+            Planes.Remove(plane);
+        }
+
         private bool IsFull()
         {
             return Planes.Count >= Capacity;
