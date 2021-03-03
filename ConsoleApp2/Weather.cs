@@ -10,7 +10,7 @@ public class Weather
         WeatherData = weatherData;
     }
 
-    public bool IsFine()
+    public virtual bool IsFine()
     {
         return WeatherData.Next() != 10;
     }

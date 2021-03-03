@@ -10,18 +10,21 @@ namespace AirportChallenge
             get; private set;
         }
         private int Capacity
-        {
-            get; set;
-        }
-        
-        public Airport(int capacity = 10)
+        { get; set; }
+
+        private Weather Weather
+        { get; set; }
+
+        public Airport(Weather weather, int capacity = 10)
         {
             Planes = new List<Plane>();
             Capacity = capacity;
+            Weather = weather;
         }
 
         public void Land(Plane plane)
         {
+            var forecast = Weather.IsFine();
             if (IsFull())
             {
                 throw new InvalidOperationException("Cannot land: No capacity for additional planes");
