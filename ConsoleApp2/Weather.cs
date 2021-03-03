@@ -12,6 +12,6 @@ public class Weather
 
     public bool IsFine()
     {
-        return WeatherData.Next() == 1;
+        return WeatherData.Next() != 10;
     }
 }

@@ -12,6 +12,8 @@ namespace AirportChallenge.Tests
         * stands in for calling a weather API or similar. If the return value is 10, the weather
         * is considered to not be sunny. 1-9 are considered sunny.
         */
+
+        
         [Test]
         public void IsFine_should_return_true_when_forecast_is_sunny()
         {
@@ -19,6 +21,15 @@ namespace AirportChallenge.Tests
             A.CallTo(() => sunnyRandom.Next()).Returns(1);
             Weather testWeather = new Weather(sunnyRandom);
             Assert.That(testWeather.IsFine(), Is.EqualTo(true));
+        }
+
+        [Test]
+        public void IsFine_should_return_false_when_forecast_is_not_sunny()
+        {
+            var rainyRandom = A.Fake<Random>();
+            A.CallTo(() => rainyRandom.Next()).Returns(10);
+            Weather testWeather = new Weather(rainyRandom);
+            Assert.That(testWeather.IsFine(), Is.EqualTo(false));
         }
     }
 }
