@@ -6,9 +6,8 @@ namespace AirportChallenge
     public class Airport
     {
         public List<Plane> Planes
-        {
-            get; private set;
-        }
+        { get; private set; }
+
         private int Capacity
         { get; set; }
 
@@ -39,8 +38,15 @@ namespace AirportChallenge
         public void TakeOff(Plane plane)
         {
             PreTakeOffChecks(plane);
-            plane.TakeOff();
-            Planes.Remove(plane);
+            try
+            {
+                plane.TakeOff();
+                Planes.Remove(plane);
+            }
+            catch
+            {
+                throw new InvalidOperationException("Cannot take off: Plane rejected instruction to take off");
+            }
         }
 
         private void PreLandingChecks()

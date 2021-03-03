@@ -7,11 +7,14 @@ namespace AirportChallenge.Tests
     [TestFixture]
     public class AirportTest
     {
-        Airport testSunnyAirport;
+        Airport sunnyAirport, airportWithPlane;
         Plane testLandedPlane, testInFlightPlane, testPlaneForTakeOff;
         Weather sunnyWeather, rainyWeather;
-        string fullAirportError = "Cannot land: No capacity for additional planes";
-        string weatherError = "Invalid Operation: Weather is too poor";
+        readonly string fullAirportError = "Cannot land: No capacity for additional planes";
+        readonly string weatherError = "Invalid Operation: Weather is too poor";
+        readonly string planeLandError = "Cannot land: Plane rejected instruction to land";
+        readonly string planeTakeOffError = "Cannot take off: Plane rejected instruction to take off";
+        readonly string planeNotPresentError = "Cannot take off: Specified plane is not present";
 
         [SetUp]
         public void Setup()
@@ -30,14 +33,17 @@ namespace AirportChallenge.Tests
             
             testPlaneForTakeOff = A.Fake<Plane>();
 
-            testSunnyAirport = new Airport(sunnyWeather);
+            sunnyAirport = new Airport(sunnyWeather);
+            
+            airportWithPlane = new Airport(sunnyWeather);
+            airportWithPlane.Land(testPlaneForTakeOff);
         }
 
         [Test]
         public void Land_should_add_plane_to_Planes_list()
         {
-            testSunnyAirport.Land(testInFlightPlane);
-            Assert.That(testSunnyAirport.Planes, Has.Member(testInFlightPlane));
+            sunnyAirport.Land(testInFlightPlane);
+            Assert.That(sunnyAirport.Planes, Has.Member(testInFlightPlane));
         }
 
         [Test]
@@ -45,10 +51,10 @@ namespace AirportChallenge.Tests
         {
             for(var i = 0; i < 10; i++)
             {
-                testSunnyAirport.Land(A.Fake<Plane>());
+                sunnyAirport.Land(A.Fake<Plane>());
             }
             Assert.That(
-                () => { testSunnyAirport.Land(testInFlightPlane); },
+                () => { sunnyAirport.Land(testInFlightPlane); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(fullAirportError));
         }
@@ -67,16 +73,15 @@ namespace AirportChallenge.Tests
         [Test]
         public void Land_should_call_Land_on_plane()
         {
-            testSunnyAirport.Land(testInFlightPlane);
+            sunnyAirport.Land(testInFlightPlane);
             A.CallTo(() => testInFlightPlane.Land()).MustHaveHappened();
         }
 
         [Test]
         public void Land_should_not_land_a_plane_if_plane_rejects_landing_instruction()
         {
-            string planeLandError = "Cannot land: Plane rejected instruction to land";
             Assert.That(
-                () => { testSunnyAirport.Land(testLandedPlane); },
+                () => { sunnyAirport.Land(testLandedPlane); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(planeLandError));
         }
@@ -84,7 +89,7 @@ namespace AirportChallenge.Tests
         [Test]
         public void Land_should_check_weather()
         {
-            testSunnyAirport.Land(testInFlightPlane);
+            sunnyAirport.Land(testInFlightPlane);
             A.CallTo(() => sunnyWeather.IsFine()).MustHaveHappened();
         }
 
@@ -101,18 +106,15 @@ namespace AirportChallenge.Tests
         [Test]
         public void TakeOff_should_remove_plane_from_Planes_list()
         {
-            testSunnyAirport.Land(testPlaneForTakeOff);
-            testSunnyAirport.TakeOff(testPlaneForTakeOff);
-            Assert.That(testSunnyAirport.Planes, Has.No.Member(testPlaneForTakeOff));
+            airportWithPlane.TakeOff(testPlaneForTakeOff);
+            Assert.That(airportWithPlane.Planes, Has.No.Member(testPlaneForTakeOff));
         }
 
         [Test]
         public void TakeOff_should_throw_error_if_specified_plane_is_not_present()
-        {
-            string planeNotPresentError = "Cannot take off: Specified plane is not present";
-            
+        {           
             Assert.That(
-                () => { testSunnyAirport.TakeOff(testPlaneForTakeOff); },
+                () => { sunnyAirport.TakeOff(testPlaneForTakeOff); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(planeNotPresentError));
         }
@@ -120,49 +122,48 @@ namespace AirportChallenge.Tests
         [Test]
         public void TakeOff_should_only_remove_specified_plane_from_Planes_list()
         {
-            
             var testPlane1 = A.Fake<Plane>();
             var testPlane2 = A.Fake<Plane>();
-            testSunnyAirport.Land(testPlane1);
-            testSunnyAirport.Land(testPlane2);
-            testSunnyAirport.TakeOff(testPlane1);
-            Assert.That(testSunnyAirport.Planes, Has.Member(testPlane2));
+            sunnyAirport.Land(testPlane1);
+            sunnyAirport.Land(testPlane2);
+            sunnyAirport.TakeOff(testPlane1);
+            Assert.That(sunnyAirport.Planes, Has.Member(testPlane2));
         }
 
         [Test]
         public void TakeOff_should_call_TakeOff_on_plane()
         {
-            testSunnyAirport.Land(testPlaneForTakeOff);
-            testSunnyAirport.TakeOff(testPlaneForTakeOff);
+            airportWithPlane.TakeOff(testPlaneForTakeOff);
             A.CallTo(() => testPlaneForTakeOff.TakeOff()).MustHaveHappened();
         }
 
-        //[Test]
-        //public void TakeOff_should_not_take_off_a_plane_if_plane_rejects_take_off_instruction()
-        //{
-
-        //}
+        [Test]
+        public void TakeOff_should_not_take_off_a_plane_if_plane_rejects_take_off_instruction()
+        {
+            sunnyAirport.Land(testInFlightPlane);
+            // Exploiting the fact that the mock plane does not change its in flight status on landing like a real plane would.
+            Assert.That(
+                () => { sunnyAirport.TakeOff(testInFlightPlane); },
+                Throws.InvalidOperationException
+                .With.Property("Message").EqualTo(planeTakeOffError));
+        }
 
         [Test]
         public void TakeOff_should_check_weather()
         {
-            testSunnyAirport.Land(testPlaneForTakeOff);
-            testSunnyAirport.TakeOff(testPlaneForTakeOff);
+            airportWithPlane.TakeOff(testPlaneForTakeOff);
+            // Test has to specify two calls because weather is checked as part of set up.
             A.CallTo(() => sunnyWeather.IsFine()).MustHaveHappenedTwiceExactly();
         }
 
         [Test]
         public void TakeOff_should_not_take_off_a_plane_if_weather_is_poor()
         {
-            // Initialise with sunny weather so the plane can land
-            Airport rainyAirport = new Airport(sunnyWeather);
-            rainyAirport.Land(testInFlightPlane);
-
             // Flip the weather
             A.CallTo(() => sunnyWeather.IsFine()).Returns(false);
 
             Assert.That(
-                () => { rainyAirport.TakeOff(testInFlightPlane); },
+                () => { airportWithPlane.TakeOff(testPlaneForTakeOff); },
                 Throws.InvalidOperationException
                 .With.Property("Message").EqualTo(weatherError));
         }
