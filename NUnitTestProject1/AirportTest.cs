@@ -9,8 +9,9 @@ namespace AirportChallenge.Tests
     {
         Airport testSunnyAirport;
         Plane testLandedPlane, testInFlightPlane, testPlaneForTakeOff;
-        Weather sunnyWeather;
-        string fullAirportError;
+        Weather sunnyWeather, rainyWeather;
+        string fullAirportError = "Cannot land: No capacity for additional planes";
+        string weatherError = "Invalid Operation: Weather is too poor";
 
         [SetUp]
         public void Setup()
@@ -18,7 +19,8 @@ namespace AirportChallenge.Tests
             sunnyWeather = A.Fake<Weather>();
             A.CallTo(() => sunnyWeather.IsFine()).Returns(true);
 
-            testSunnyAirport = new Airport(sunnyWeather);          
+            rainyWeather = A.Fake<Weather>();
+            A.CallTo(() => rainyWeather.IsFine()).Returns(false);        
 
             testLandedPlane = A.Fake<Plane>();
             A.CallTo(() => testLandedPlane.Land()).Throws<InvalidOperationException>();
@@ -27,7 +29,8 @@ namespace AirportChallenge.Tests
             A.CallTo(() => testInFlightPlane.TakeOff()).Throws<InvalidOperationException>();
             
             testPlaneForTakeOff = A.Fake<Plane>();
-            fullAirportError = "Cannot land: No capacity for additional planes";
+
+            testSunnyAirport = new Airport(sunnyWeather);
         }
 
         [Test]
@@ -86,6 +89,16 @@ namespace AirportChallenge.Tests
         }
 
         [Test]
+        public void Land_should_not_land_a_plane_if_weather_is_poor()
+        {
+            Airport rainyAirport = new Airport(rainyWeather);
+            Assert.That(
+                () => { rainyAirport.Land(testInFlightPlane); },
+                Throws.InvalidOperationException
+                .With.Property("Message").EqualTo(weatherError));
+        }
+
+        [Test]
         public void TakeOff_should_remove_plane_from_Planes_list()
         {
             testSunnyAirport.Land(testPlaneForTakeOff);
@@ -124,10 +137,34 @@ namespace AirportChallenge.Tests
             A.CallTo(() => testPlaneForTakeOff.TakeOff()).MustHaveHappened();
         }
 
-        [Test]
-        public void TakeOff_should_not_take_off_a_plane_if_plane_rejects_take_off_instruction()
-        {
+        //[Test]
+        //public void TakeOff_should_not_take_off_a_plane_if_plane_rejects_take_off_instruction()
+        //{
 
+        //}
+
+        [Test]
+        public void TakeOff_should_check_weather()
+        {
+            testSunnyAirport.Land(testPlaneForTakeOff);
+            testSunnyAirport.TakeOff(testPlaneForTakeOff);
+            A.CallTo(() => sunnyWeather.IsFine()).MustHaveHappenedTwiceExactly();
+        }
+
+        [Test]
+        public void TakeOff_should_not_take_off_a_plane_if_weather_is_poor()
+        {
+            // Initialise with sunny weather so the plane can land
+            Airport rainyAirport = new Airport(sunnyWeather);
+            rainyAirport.Land(testInFlightPlane);
+
+            // Flip the weather
+            A.CallTo(() => sunnyWeather.IsFine()).Returns(false);
+
+            Assert.That(
+                () => { rainyAirport.TakeOff(testInFlightPlane); },
+                Throws.InvalidOperationException
+                .With.Property("Message").EqualTo(weatherError));
         }
     }
 }

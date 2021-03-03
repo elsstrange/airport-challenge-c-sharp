@@ -24,11 +24,7 @@ namespace AirportChallenge
 
         public void Land(Plane plane)
         {
-            var forecast = Weather.IsFine();
-            if (IsFull())
-            {
-                throw new InvalidOperationException("Cannot land: No capacity for additional planes");
-            }
+            PreLandingChecks();
             try
             {
                 plane.Land();
@@ -42,22 +38,45 @@ namespace AirportChallenge
 
         public void TakeOff(Plane plane)
         {
-            if (PlaneIsNotPresent(plane))
-            {
-                throw new InvalidOperationException("Cannot take off: Specified plane is not present");
-            }
+            PreTakeOffChecks(plane);
             plane.TakeOff();
             Planes.Remove(plane);
         }
 
-        private bool IsFull()
+        private void PreLandingChecks()
         {
-            return Planes.Count >= Capacity;
+            CheckCapacity();
+            CheckWeather();
         }
 
-        private bool PlaneIsNotPresent(Plane plane)
+        private void PreTakeOffChecks(Plane plane)
         {
-            return !Planes.Contains(plane);
+            CheckPlaneIsPresent(plane);
+            CheckWeather();
+        }
+
+        private void CheckPlaneIsPresent(Plane plane)
+        {
+            if (!Planes.Contains(plane))
+            {
+                throw new InvalidOperationException("Cannot take off: Specified plane is not present");
+            }
+        }
+
+        private void CheckCapacity()
+        {
+            if (Planes.Count >= Capacity)
+            {
+                throw new InvalidOperationException("Cannot land: No capacity for additional planes");
+            }
+        }
+
+        private void CheckWeather()
+        {
+            if (!Weather.IsFine())
+            {
+                throw new InvalidOperationException("Invalid Operation: Weather is too poor");
+            }
         }
     }
 }
